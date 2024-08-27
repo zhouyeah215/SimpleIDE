@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QDebug>
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
