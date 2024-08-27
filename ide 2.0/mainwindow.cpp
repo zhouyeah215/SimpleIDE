@@ -115,6 +115,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(build_compile,SIGNAL(triggered()),this,SLOT(on_compile()));
     connect(build_run,SIGNAL(triggered()),this,SLOT(on_run()));
     connect(find_out, SIGNAL(triggered()), this, SLOT(findText()));
+    connect(btn, &QPushButton::clicked, findDialog, &QDialog::accept);
 }
 
 MainWindow::~MainWindow()
@@ -255,17 +256,28 @@ void MainWindow::on_run()
     system(destname.toStdString().c_str());
 }
 
-void MainWindow::findText()
+/*void MainWindow::findText()
 {
     QString str = findEdit->text();
 
-    /*bool ret = ui->textEdit->find(str, QTextDocument::FindBackward);
-    if (!ret)
-    {
-        QMessageBox::warning(this, tr("查找"), tr("找不到%1").arg(str));
-    }*/
     bool found = text1->find(str, QTextDocument::FindBackward);
     if (!found) {
         QMessageBox::warning(this, tr("查找"), tr("找不到%1").arg(str));
     }
+}*/
+void MainWindow::findText()
+{
+    // 显示查找对话框
+    if (findDialog->exec() == QDialog::Accepted) {
+        QString str = findEdit->text();
+        /*qDebug() << "Searching for: " << str;
+        qDebug() << "text1 is" << text1->toPlainText();
+        bool found = text1->find(str, QTextDocument::FindBackward);*/
+        QTextDocument::FindFlags options = QTextDocument::FindFlags();
+        bool found = text1->find(str, options);
+        if (!found) {
+            QMessageBox::warning(this, tr("查找"), tr("找不到%1").arg(str));
+        }
+    }
 }
+
