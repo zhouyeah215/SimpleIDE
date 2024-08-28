@@ -120,19 +120,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete text1;
+    delete text;
 }
 
 void MainWindow::on_new()
 {
-    text1 = new QTextEdit;
+    text = new QTextEdit;
     QFont f;
     f.setPixelSize(30);
-    text1->setFont(f);
+    text->setFont(f);
     //QColor c;
     //c.setRgb(255,0,0);
     //text1->setTextColor(c);
-    this->setCentralWidget(text1);
+    this->setCentralWidget(text);
 }
 
 void MainWindow::on_open()
@@ -156,7 +156,7 @@ void MainWindow::on_open()
             content += buf;
         }
         fclose(p);
-        text1->setText(content);
+        text->setText(content);
     }
 }
 
@@ -173,7 +173,7 @@ void MainWindow::on_save()
     }
     else
     {
-        fputs(text1->toPlainText().toStdString().data(), p);
+        fputs(text->toPlainText().toStdString().data(), p);
         fclose(p);
     }
 }
@@ -190,32 +190,32 @@ void MainWindow::on_exit()
 
 void MainWindow::on_cut()
 {
-    text1->cut();
+    text->cut();
 }
 
 void MainWindow::on_copy()
 {
-    text1->copy();
+    text->copy();
 }
 
 void MainWindow::on_paste()
 {
-    text1->paste();
+    text->paste();
 }
 
 void MainWindow::on_selectAll()
 {
-    text1->selectAll();
+    text->selectAll();
 }
 
 void MainWindow::on_undo()
 {
-    text1->undo();
+    text->undo();
 }
 
 void MainWindow::on_redo()
 {
-    text1->redo();
+    text->redo();
 }
 
 void MainWindow::on_compile()
@@ -268,16 +268,38 @@ void MainWindow::on_run()
 void MainWindow::findText()
 {
     // 显示查找对话框
-    if (findDialog->exec() == QDialog::Accepted) {
+    if (findDialog->exec() == QDialog::Accepted){
         QString str = findEdit->text();
-        /*qDebug() << "Searching for: " << str;
+        QTextDocument::FindFlags op = QTextDocument::FindFlags();
+        bool find = text->find(str, op);
+        if (!find){
+            QMessageBox::warning(this, tr("查找"), tr("找不到%1").arg(str));
+        }
+        else {
+            QTextCursor cursor = text->textCursor();
+            QTextCharFormat highlightFormat;
+            highlightFormat.setBackground(Qt::lightGray);
+            QTextDocument *doc = text->document();
+            cursor.setPosition(0);
+            QTextDocument::FindFlags options = QTextDocument::FindFlags();
+            while (!cursor.isNull() && !cursor.atEnd()){
+                cursor = doc->find(str, cursor, options);
+                if (!cursor.isNull()){
+                    cursor.mergeCharFormat(highlightFormat);
+                }
+            }
+        }
+    }
+    /*if (findDialog->exec() == QDialog::Accepted) {
+        QString str = findEdit->text();
+        qDebug() << "Searching for: " << str;
         qDebug() << "text1 is" << text1->toPlainText();
-        bool found = text1->find(str, QTextDocument::FindBackward);*/
+        bool found = text1->find(str, QTextDocument::FindBackward);
         QTextDocument::FindFlags options = QTextDocument::FindFlags();
-        bool found = text1->find(str, options);
+        bool found = text->find(str, options);
         if (!found) {
             QMessageBox::warning(this, tr("查找"), tr("找不到%1").arg(str));
         }
-    }
+    }*/
 }
 
